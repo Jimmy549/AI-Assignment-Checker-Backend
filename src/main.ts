@@ -7,9 +7,23 @@ async function bootstrap() {
   const logger = new Logger('Bootstrap');
   const app = await NestFactory.create(AppModule);
 
-  // Enable CORS
+  // Enable CORS with dynamic origin handling (allow deployed frontend and localhost)
+  const allowedOrigins = [
+    process.env.FRONTEND_URL, // e.g. https://ai-assignment-checker-frontend.vercel.app
+    'http://localhost:3000',
+    'http://127.0.0.1:3000',
+  ].filter(Boolean) as string[];
+
   app.enableCors({
-    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+    origin: (origin, callback) => {
+      // Allow requests with no origin (e.g., server-to-server or curl)
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.indexOf(origin) !== -1) {
+        return callback(null, true);
+      }
+      // Allow if FRONTEND_URL equals origin (defensive) or fallback to deny
+      return callback(new Error(`Origin ${origin} not allowed by CORS`));
+    },
     credentials: true,
   });
 
