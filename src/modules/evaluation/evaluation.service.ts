@@ -137,4 +137,24 @@ export class EvaluationService {
 
     return this.evaluationRepository.save(evaluation);
   }
+
+  async reEvaluateSubmission(submissionId: string): Promise<EvaluationResult> {
+    const submission = await this.evaluationRepository.manager
+      .getRepository('submissions')
+      .findOne({ where: { id: submissionId } });
+
+    if (!submission) {
+      throw new NotFoundException('Submission not found');
+    }
+
+    const assignment = await this.evaluationRepository.manager
+      .getRepository('assignments')
+      .findOne({ where: { id: submission.assignmentId } });
+
+    if (!assignment) {
+      throw new NotFoundException('Assignment not found');
+    }
+
+    return this.reEvaluate(submissionId, assignment as Assignment, submission as Submission);
+  }
 }

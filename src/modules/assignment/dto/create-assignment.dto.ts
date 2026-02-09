@@ -26,5 +26,12 @@ export class CreateAssignmentDto {
   @Min(0)
   @Max(1)
   @IsOptional()
-  passPercentage?: number; // Must be between 0 and 1 (0% to 100%)
+  passPercentage?: number;
+
+  @IsString()
+  @IsOptional()
+  deadline?: string;
+
+  @IsOptional()
+  gradingCriteria?: any;
 }

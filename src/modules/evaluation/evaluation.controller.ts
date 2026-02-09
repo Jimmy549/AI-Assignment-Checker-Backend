@@ -7,6 +7,7 @@ import {
   UseGuards,
   Request,
   Get,
+  Post,
 } from '@nestjs/common';
 import { EvaluationService } from './evaluation.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -52,5 +53,10 @@ export class EvaluationController {
       throw new BadRequestException('Nothing to update');
     }
     return this.evaluationService.updateEvaluation(id, updateData);
+  }
+
+  @Post('re-evaluate/:submissionId')
+  async reEvaluate(@Param('submissionId') submissionId: string) {
+    return this.evaluationService.reEvaluateSubmission(submissionId);
   }
 }

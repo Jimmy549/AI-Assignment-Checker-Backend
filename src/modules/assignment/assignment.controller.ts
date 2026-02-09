@@ -3,6 +3,7 @@ import {
   Post,
   Get,
   Delete,
+  Patch,
   Body,
   Param,
   UseGuards,
@@ -40,5 +41,19 @@ export class AssignmentController {
   async deleteAssignment(@Param('id') id: string, @Req() req: any) {
     const teacherId = req.user.id;
     return this.assignmentService.deleteAssignment(id, teacherId);
+  }
+
+  @Patch(':id/status')
+  async updateStatus(
+    @Param('id') id: string,
+    @Body() body: { status: string },
+    @Req() req: any,
+  ) {
+    return this.assignmentService.updateStatus(id, body.status, req.user.id);
+  }
+
+  @Post(':id/re-evaluate-all')
+  async reEvaluateAll(@Param('id') id: string, @Req() req: any) {
+    return this.assignmentService.reEvaluateAllSubmissions(id, req.user.id);
   }
 }
